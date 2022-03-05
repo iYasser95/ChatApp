@@ -13,8 +13,15 @@ struct LoginView: View {
     @State var email = ""
     @State var password = ""
     @State var isButtonDisabled: Bool = true
+    @State var loginStatusMessage: String = ""
+    var firebaseManager = FirebaseManager.shared
+    var isEmailValid: Bool {
+        return validateEmail(email)
+    }
     init() {
-        FirebaseApp.configure()
+        if FirebaseApp.allApps?.isEmpty ?? true {
+            FirebaseApp.configure()
+        }
     }
     var body: some View {
         NavigationView {
@@ -70,6 +77,8 @@ struct LoginView: View {
                     })
                     .disabled(isButtonDisabled)
                     .opacity(isButtonDisabled ? 0.5 : 1)
+                    Text(loginStatusMessage)
+                        .foregroundColor(.red)
                 }.padding()
             }
             .navigationTitle(isLoginState ? "Log In" : "Create Account")
@@ -92,23 +101,28 @@ struct LoginView: View {
     
     private func createNewAccount() {
         // Create new user account in Firebase
-//        Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-//            guard error == nil else {
-//                print("failed to create user", error?.localizedDescription ?? "")
-//                return
-//            }
-//
-//            print("Create account with ID: \(result?.user.uid ?? "")")
-//        }
+        firebaseManager.createNewAccount(email: email, password: password) { (error) in
+            self.loginStatusMessage = error?.localizedDescription ?? ""
+        }
     }
-    
+
     private func loginUser() {
         // Login user with Firebase
+        firebaseManager.loginUser(email: email, password: password) { (error) in
+            self.loginStatusMessage = error?.localizedDescription ?? ""
+        }
     }
     
     // MARK: - Validate credentials
     func validateCerdentials() {
-        isButtonDisabled = email.isEmpty || password.isEmpty
+        isButtonDisabled = email.isEmpty || password.isEmpty || !isEmailValid
+    }
+    
+    func validateEmail(_ string: String) -> Bool {
+        guard string.count <= 64 else { return false }
+        let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailFormat)
+        return emailPredicate.evaluate(with: string)
     }
 }
 
