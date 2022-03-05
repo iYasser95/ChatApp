@@ -18,11 +18,6 @@ struct LoginView: View {
     var isEmailValid: Bool {
         return validateEmail(email)
     }
-    init() {
-        if FirebaseApp.allApps?.isEmpty ?? true {
-            FirebaseApp.configure()
-        }
-    }
     var body: some View {
         NavigationView {
             ScrollView {
