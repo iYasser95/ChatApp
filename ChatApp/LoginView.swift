@@ -6,11 +6,23 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct LoginView: View {
     @State var isLoginState: Bool = false
     @State var email = ""
     @State var password = ""
+    @State var isButtonDisabled: Bool = true
+    @State var loginStatusMessage: String = ""
+    var firebaseManager = FirebaseManager.shared
+    var isEmailValid: Bool {
+        return validateEmail(email)
+    }
+    init() {
+        if FirebaseApp.allApps?.isEmpty ?? true {
+            FirebaseApp.configure()
+        }
+    }
     var body: some View {
         NavigationView {
             ScrollView {
@@ -38,7 +50,13 @@ struct LoginView: View {
                         TextField("Email", text: $email)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
+                            .onChange(of: email, perform: { _ in
+                                validateCerdentials()
+                            })
                         SecureField("Password", text: $password)
+                            .onChange(of: password, perform: { _ in
+                                validateCerdentials()
+                            })
                     }
                     .padding(12)
                     .background(Color.white)
@@ -57,23 +75,54 @@ struct LoginView: View {
                         .cornerRadius(17)
                         .padding()
                     })
+                    .disabled(isButtonDisabled)
+                    .opacity(isButtonDisabled ? 0.5 : 1)
+                    Text(loginStatusMessage)
+                        .foregroundColor(.red)
                 }.padding()
             }
             .navigationTitle(isLoginState ? "Log In" : "Create Account")
             .background(Color.init(white: 0, opacity: 0.05)
                             .ignoresSafeArea())
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
-    // MARK: - Handle Buttons Action
+    // MARK: - Handle Authentication
     // Handle the functionality for the login & create
     // if Login state .. user should login with Firebase
     // if Not, create new in Firebase
     private func handleLoginCreateAction() {
         if isLoginState {
-            print("Login...")
+            loginUser()
         } else {
-            print("Register...")
+           createNewAccount()
         }
+    }
+    
+    private func createNewAccount() {
+        // Create new user account in Firebase
+        firebaseManager.createNewAccount(email: email, password: password) { (error) in
+            self.loginStatusMessage = error?.localizedDescription ?? ""
+        }
+    }
+
+    private func loginUser() {
+        // Login user with Firebase
+        firebaseManager.loginUser(email: email, password: password) { (error) in
+            self.loginStatusMessage = error?.localizedDescription ?? ""
+        }
+    }
+    
+    // MARK: - Validate credentials
+    func validateCerdentials() {
+        isButtonDisabled = email.isEmpty || password.isEmpty || !isEmailValid
+    }
+    
+    func validateEmail(_ string: String) -> Bool {
+        guard string.count <= 64 else { return false }
+        let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailFormat)
+        return emailPredicate.evaluate(with: string)
     }
 }
 
