@@ -14,6 +14,8 @@ struct LoginView: View {
     @State var password = ""
     @State var isButtonDisabled: Bool = true
     @State var loginStatusMessage: String = ""
+    @State var shouldShowImagePicker: Bool = false
+    @State var userImage: UIImage?
     var firebaseManager = FirebaseManager.shared
     var isEmailValid: Bool {
         return validateEmail(email)
@@ -32,12 +34,29 @@ struct LoginView: View {
                     }).pickerStyle(SegmentedPickerStyle())
                     if !isLoginState {
                         Button(action: {
-                            
+                            shouldShowImagePicker.toggle()
                         }, label: {
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 64))
-                                .accentColor(.black)
-                                .padding()
+                            VStack {
+                                Group {
+                                    if let image = userImage {
+                                        Image(uiImage: image)
+                                            .resizable()
+                                    } else {
+                                        Image(systemName: "person.fill")
+                                            .font(.system(size: 64))
+                                            .foregroundColor(Color(.label))
+                                            .padding()
+                                    }
+                                }
+                                .scaledToFill()
+                                .frame(width: 128, height: 128)
+                                .cornerRadius(64)
+                                
+                            }
+                            .overlay(RoundedRectangle(cornerRadius: 64)
+                                        .stroke(Color.black, lineWidth: 3)
+                            )
+                           
                         })
                     }
                     // applying modifiers on 'Group' will apply them to all the elements in the group
@@ -81,6 +100,9 @@ struct LoginView: View {
                             .ignoresSafeArea())
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil, content: {
+            ImagePicker(image: $userImage)
+        })
     }
     // MARK: - Handle Authentication
     // Handle the functionality for the login & create
