@@ -108,7 +108,7 @@ struct LoginView: View {
     
     // MARK: - Validate credentials
     func validateCerdentials() {
-        
+        isButtonDisabled = email.isEmpty || password.isEmpty
     }
 }
 
