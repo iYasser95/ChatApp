@@ -120,6 +120,12 @@ struct LoginView: View {
         // Create new user account in Firebase
         firebaseManager.createNewAccount(email: email, password: password) { (error) in
             self.loginStatusMessage = error?.localizedDescription ?? ""
+            guard error == nil else { return }
+            if let userImage = userImage {
+                self.firebaseManager.uploadImageToStorage(image: userImage) { (error) in
+                    self.loginStatusMessage = error?.localizedDescription ?? ""
+                }
+            }
         }
     }
 
