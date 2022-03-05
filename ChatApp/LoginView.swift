@@ -6,11 +6,16 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct LoginView: View {
     @State var isLoginState: Bool = false
     @State var email = ""
     @State var password = ""
+    @State var isButtonDisabled: Bool = true
+    init() {
+        FirebaseApp.configure()
+    }
     var body: some View {
         NavigationView {
             ScrollView {
@@ -38,7 +43,13 @@ struct LoginView: View {
                         TextField("Email", text: $email)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
+                            .onChange(of: email, perform: { _ in
+                                validateCerdentials()
+                            })
                         SecureField("Password", text: $password)
+                            .onChange(of: password, perform: { _ in
+                                validateCerdentials()
+                            })
                     }
                     .padding(12)
                     .background(Color.white)
@@ -57,23 +68,47 @@ struct LoginView: View {
                         .cornerRadius(17)
                         .padding()
                     })
+                    .disabled(isButtonDisabled)
+                    .opacity(isButtonDisabled ? 0.5 : 1)
                 }.padding()
             }
             .navigationTitle(isLoginState ? "Log In" : "Create Account")
             .background(Color.init(white: 0, opacity: 0.05)
                             .ignoresSafeArea())
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
-    // MARK: - Handle Buttons Action
+    // MARK: - Handle Authentication
     // Handle the functionality for the login & create
     // if Login state .. user should login with Firebase
     // if Not, create new in Firebase
     private func handleLoginCreateAction() {
         if isLoginState {
-            print("Login...")
+            loginUser()
         } else {
-            print("Register...")
+           createNewAccount()
         }
+    }
+    
+    private func createNewAccount() {
+        // Create new user account in Firebase
+//        Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
+//            guard error == nil else {
+//                print("failed to create user", error?.localizedDescription ?? "")
+//                return
+//            }
+//
+//            print("Create account with ID: \(result?.user.uid ?? "")")
+//        }
+    }
+    
+    private func loginUser() {
+        // Login user with Firebase
+    }
+    
+    // MARK: - Validate credentials
+    func validateCerdentials() {
+        
     }
 }
 

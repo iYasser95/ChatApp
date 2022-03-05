@@ -13,6 +13,7 @@
 		181DA7AA27D26154005F2B08 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 181DA7A927D26154005F2B08 /* Preview Assets.xcassets */; };
 		1872C1C627D3A513008705EA /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1872C1C527D3A513008705EA /* FirebaseAuth */; };
 		1872C1C827D3A513008705EA /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 1872C1C727D3A513008705EA /* FirebaseStorage */; };
+		1872C1CB27D3A71D008705EA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1872C1CA27D3A71D008705EA /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		181DA7A627D26154005F2B08 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		181DA7A927D26154005F2B08 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		181DA7AB27D26154005F2B08 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1872C1CA27D3A71D008705EA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				181DA7A427D26153005F2B08 /* LoginView.swift */,
 				181DA7A627D26154005F2B08 /* Assets.xcassets */,
 				181DA7AB27D26154005F2B08 /* Info.plist */,
+				1872C1CA27D3A71D008705EA /* GoogleService-Info.plist */,
 				181DA7A827D26154005F2B08 /* Preview Content */,
 			);
 			path = ChatApp;
@@ -139,6 +142,7 @@
 			files = (
 				181DA7AA27D26154005F2B08 /* Preview Assets.xcassets in Resources */,
 				181DA7A727D26154005F2B08 /* Assets.xcassets in Resources */,
+				1872C1CB27D3A71D008705EA /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
