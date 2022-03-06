@@ -55,6 +55,7 @@ struct LoginView: View {
                             }
                             .overlay(RoundedRectangle(cornerRadius: 64)
                                         .stroke(Color.black, lineWidth: 3)
+                            
                             )
                            
                         })
@@ -122,8 +123,14 @@ struct LoginView: View {
             self.loginStatusMessage = error?.localizedDescription ?? ""
             guard error == nil else { return }
             if let userImage = userImage {
-                self.firebaseManager.uploadImageToStorage(image: userImage) { (error) in
+                self.firebaseManager.uploadImageToStorage(image: userImage) { (error, url) in
                     self.loginStatusMessage = error?.localizedDescription ?? ""
+                    let auth = firebaseManager.auth
+                    let uid = auth.currentUser?.uid ?? ""
+                    let userData = ["uid": uid, "email": self.email, "profileImage": url?.absoluteString ?? ""]
+                    self.firebaseManager.storeUserData(with: userData) { (error) in
+                        self.loginStatusMessage = error?.localizedDescription ?? ""
+                    }
                 }
             }
         }
