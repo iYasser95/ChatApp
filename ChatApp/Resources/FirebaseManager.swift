@@ -7,15 +7,18 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestore
 class FirebaseManager: NSObject {
     let auth: Auth
     let storage: Storage
+    let fireStore: Firestore
     static let shared = FirebaseManager()
     
     override init() {
         FirebaseApp.configure()
         auth = Auth.auth()
         storage = Storage.storage()
+        fireStore = Firestore.firestore()
         super.init()
     }
     
@@ -46,7 +49,7 @@ class FirebaseManager: NSObject {
         }
     }
     
-    func uploadImageToStorage(image: UIImage, completion: @escaping (Error?) -> Void) {
+    func uploadImageToStorage(image: UIImage, completion: @escaping (Error?, URL?) -> Void) {
         // Upload user image and save in storage
         guard let fileName = auth.currentUser?.uid else { return }
         let reference = storage.reference(withPath: fileName)
@@ -54,19 +57,33 @@ class FirebaseManager: NSObject {
         reference.putData(imageData, metadata: nil) { (data, error) in
             guard error == nil else {
                 NSLog("Failed to upload image", error?.localizedDescription ?? "")
-                completion(error)
+                completion(error, nil)
                 return
             }
             NSLog("Uploaded Image", self)
             reference.downloadURL { (url, error) in
                 guard error == nil else {
                     NSLog("Failed to download image", error?.localizedDescription ?? "")
-                    completion(error)
+                    completion(error, nil)
                     return
                 }
                 NSLog("Downloaded image", url?.absoluteString ?? "")
-                completion(nil)
+                completion(nil, url)
             }
         }
+    }
+    
+    func storeUserData(with data: [String: Any], completion: @escaping (Error?) -> Void) {
+        guard let userID = data["uid"] as? String else { return }
+        fireStore.collection(userID)
+            .document(userID).setData(data) { (error) in
+                guard error == nil else {
+                    NSLog("Failed to store user data", error?.localizedDescription ?? "")
+                    completion(error)
+                    return
+                }
+                NSLog("Stored user data", self)
+                completion(nil)
+            }
     }
 }
