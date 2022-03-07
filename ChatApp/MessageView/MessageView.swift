@@ -6,19 +6,23 @@
 //
 
 import SwiftUI
-
+import SDWebImageSwiftUI
 struct MessageView: View {
 
     @State var showLogoutOption = false
-
+    @ObservedObject private var model = MessageViewModel()
     private var customNavBar: some View {
         HStack(spacing: 16) {
-
-            Image(systemName: "person.fill")
-                .font(.system(size: 34, weight: .heavy))
-
+            WebImage(url: URL(string: model.user?.profileImageUrl ?? ""))
+                .scaledToFill()
+                .frame(width: 50, height: 50)
+                .clipped()
+                .cornerRadius(50)
+                .overlay(RoundedRectangle(cornerRadius: 50)
+                            .stroke(Color(.label), lineWidth: 1))
             VStack(alignment: .leading, spacing: 4) {
-                Text("USERNAME")
+                let email = model.user?.email.removeEmailSuffix.capitalized ?? "USERNAME"
+                Text(email)
                     .font(.system(size: 24, weight: .bold))
 
                 HStack {
