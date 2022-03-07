@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1808CF9827D610A5009408D5 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1808CF9727D610A5009408D5 /* MessageView.swift */; };
 		181DA7A327D26153005F2B08 /* ChatAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181DA7A227D26153005F2B08 /* ChatAppApp.swift */; };
 		181DA7A527D26153005F2B08 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181DA7A427D26153005F2B08 /* LoginView.swift */; };
 		181DA7A727D26154005F2B08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 181DA7A627D26154005F2B08 /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1808CF9727D610A5009408D5 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		181DA79F27D26153005F2B08 /* ChatApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		181DA7A227D26153005F2B08 /* ChatAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAppApp.swift; sourceTree = "<group>"; };
 		181DA7A427D26153005F2B08 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -45,6 +47,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1808CF9627D6108E009408D5 /* MessageView */ = {
+			isa = PBXGroup;
+			children = (
+				1808CF9727D610A5009408D5 /* MessageView.swift */,
+			);
+			path = MessageView;
+			sourceTree = "<group>";
+		};
 		181DA79627D26153005F2B08 = {
 			isa = PBXGroup;
 			children = (
@@ -64,12 +74,13 @@
 		181DA7A127D26153005F2B08 /* ChatApp */ = {
 			isa = PBXGroup;
 			children = (
-				18817DE127D3C2BD0077C541 /* Resources */,
+				1808CF9627D6108E009408D5 /* MessageView */,
 				181DA7A227D26153005F2B08 /* ChatAppApp.swift */,
 				181DA7A427D26153005F2B08 /* LoginView.swift */,
 				181DA7A627D26154005F2B08 /* Assets.xcassets */,
 				181DA7AB27D26154005F2B08 /* Info.plist */,
 				1872C1CA27D3A71D008705EA /* GoogleService-Info.plist */,
+				18817DE127D3C2BD0077C541 /* Resources */,
 				181DA7A827D26154005F2B08 /* Preview Content */,
 			);
 			path = ChatApp;
@@ -174,6 +185,7 @@
 				18817DE927D3CABD0077C541 /* ImagePicker.swift in Sources */,
 				181DA7A527D26153005F2B08 /* LoginView.swift in Sources */,
 				181DA7A327D26153005F2B08 /* ChatAppApp.swift in Sources */,
+				1808CF9827D610A5009408D5 /* MessageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
