@@ -13,7 +13,6 @@ class FirebaseManager: NSObject {
     let storage: Storage
     let fireStore: Firestore
     static let shared = FirebaseManager()
-    
     override init() {
         FirebaseApp.configure()
         auth = Auth.auth()
@@ -75,7 +74,7 @@ class FirebaseManager: NSObject {
     
     func storeUserData(with data: [String: Any], completion: @escaping (Error?) -> Void) {
         guard let userID = data["uid"] as? String else { return }
-        fireStore.collection(userID)
+        fireStore.collection("users")
             .document(userID).setData(data) { (error) in
                 guard error == nil else {
                     NSLog("Failed to store user data", error?.localizedDescription ?? "")
