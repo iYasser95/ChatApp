@@ -9,13 +9,14 @@ import SwiftUI
 import Firebase
 
 struct LoginView: View {
-    @State var isLoginState: Bool = false
-    @State var email = ""
-    @State var password = ""
-    @State var isButtonDisabled: Bool = true
-    @State var loginStatusMessage: String = ""
-    @State var shouldShowImagePicker: Bool = false
-    @State var userImage: UIImage?
+    @State private var isLoginState: Bool = false
+    @State private var email = ""
+    @State private var password = ""
+    @State private var isButtonDisabled: Bool = true
+    @State private var loginStatusMessage: String = ""
+    @State private var shouldShowImagePicker: Bool = false
+    @State private var userImage: UIImage?
+    let didUserLogIn: () -> ()
     var firebaseManager = FirebaseManager.shared
     var isEmailValid: Bool {
         return validateEmail(email)
@@ -119,10 +120,15 @@ struct LoginView: View {
     
     private func createNewAccount() {
         // Create new user account in Firebase
+        guard self.userImage != nil else {
+            // Show an error message for empty image
+            self.loginStatusMessage = "Please select a profile Image"
+            return
+        }
         firebaseManager.createNewAccount(email: email, password: password) { (error) in
             self.loginStatusMessage = error?.localizedDescription ?? ""
             guard error == nil else { return }
-            if let userImage = userImage {
+            if let userImage = self.userImage {
                 self.firebaseManager.uploadImageToStorage(image: userImage) { (error, url) in
                     self.loginStatusMessage = error?.localizedDescription ?? ""
                     let auth = firebaseManager.auth
@@ -130,6 +136,8 @@ struct LoginView: View {
                     let userData = ["uid": uid, "email": self.email, "profileImage": url?.absoluteString ?? ""]
                     self.firebaseManager.storeUserData(with: userData) { (error) in
                         self.loginStatusMessage = error?.localizedDescription ?? ""
+                        guard error == nil else { return }
+                        self.didUserLogIn()
                     }
                 }
             }
@@ -140,6 +148,8 @@ struct LoginView: View {
         // Login user with Firebase
         firebaseManager.loginUser(email: email, password: password) { (error) in
             self.loginStatusMessage = error?.localizedDescription ?? ""
+            guard error == nil else { return }
+            self.didUserLogIn()
         }
     }
     
@@ -158,6 +168,8 @@ struct LoginView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        LoginView(didUserLogIn: {
+            // No Implementation needed here.
+        })
     }
 }

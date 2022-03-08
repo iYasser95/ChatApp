@@ -90,6 +90,7 @@
 		181DA7A127D26153005F2B08 /* ChatApp */ = {
 			isa = PBXGroup;
 			children = (
+				18859D1D27D7886B00FF472B /* Model */,
 				18817DE127D3C2BD0077C541 /* Utils */,
 				1808CF9627D6108E009408D5 /* MessageView */,
 				181DA7A227D26153005F2B08 /* ChatAppApp.swift */,
@@ -117,9 +118,16 @@
 				18817DE227D3C2CF0077C541 /* FirebaseManager.swift */,
 				18817DE827D3CABD0077C541 /* ImagePicker.swift */,
 				180C08C827D6839900E16786 /* MessageViewModel.swift */,
-				180C08CC27D6897400E16786 /* UserModel.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		18859D1D27D7886B00FF472B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				180C08CC27D6897400E16786 /* UserModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -49,11 +49,18 @@ struct MessageView: View {
         .actionSheet(isPresented: $showLogoutOption) {
             .init(title: Text("Settings"), message: Text("What do you want to do?"), buttons: [
                 .destructive(Text("Sign Out 💣"), action: {
+                    model.signOut()
                     print("handle sign out")
                 }),
                 .cancel()
             ])
         }
+        .fullScreenCover(isPresented: $model.isUserLoggedOut, content: {
+            LoginView(didUserLogIn: {
+                self.model.isUserLoggedOut = false
+                self.model.fetchCurrentUser()
+            })
+        })
     }
 
     var body: some View {
