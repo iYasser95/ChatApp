@@ -8,11 +8,15 @@
 import Foundation
 class MessageViewModel: ObservableObject {
     @Published var user: UserModel?
+    @Published var isUserLoggedOut: Bool = false
     init() {
+        DispatchQueue.main.async {
+            self.isUserLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
+        }
         fetchCurrentUser()
     }
     
-    private func fetchCurrentUser() {
+     func fetchCurrentUser() {
         guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
         FirebaseManager.shared.fireStore.collection("users")
             .document(uid).getDocument { (snapshot, error) in
@@ -22,10 +26,13 @@ class MessageViewModel: ObservableObject {
                 }
                 
                 guard let data = snapshot?.data() else { return }
-                let uid = data["uid"] as? String ?? ""
-                let email = data["email"] as? String ?? ""
-                let profileImageUrl = data["profileImage"] as? String ?? ""
-                self.user = UserModel(uid: uid, email: email, profileImageUrl: profileImageUrl)
+                
+                self.user = .init(data: data)
             }
+    }
+    
+    func signOut() {
+        isUserLoggedOut.toggle()
+        try? FirebaseManager.shared.auth.signOut()
     }
 }
