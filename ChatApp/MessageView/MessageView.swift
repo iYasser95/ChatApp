@@ -67,7 +67,7 @@ struct MessageView: View {
             })
         })
         .fullScreenCover(isPresented: $showProfile, content: {
-            Text("Profile")
+            UserProfile()
         })
     }
 

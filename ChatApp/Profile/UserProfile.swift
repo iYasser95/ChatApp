@@ -51,6 +51,21 @@ struct UserProfile: View {
                     .cornerRadius(17)
                     .padding()
                 }
+                
+                Button(action: {
+                    
+                }, label: {
+                    HStack {
+                        Spacer()
+                        Text("Update Profile")
+                            .foregroundColor(Color.white)
+                            .padding(.vertical, 10)
+                            .font(.system(size: 14, weight: .bold))
+                        Spacer()
+                    }.background(Color.blue)
+                    .cornerRadius(17)
+                    .padding()
+                })
             }
             .background(Color.init(white: 0, opacity: 0.05).ignoresSafeArea())
             .navigationViewStyle(StackNavigationViewStyle())
