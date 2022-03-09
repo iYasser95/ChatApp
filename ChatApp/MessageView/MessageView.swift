@@ -10,16 +10,21 @@ import SDWebImageSwiftUI
 struct MessageView: View {
 
     @State var showLogoutOption = false
+    @State var showProfile = false
     @ObservedObject private var model = MessageViewModel()
     private var customNavBar: some View {
         HStack(spacing: 16) {
-            WebImage(url: URL(string: model.user?.profileImageUrl ?? ""))
-                .scaledToFill()
-                .frame(width: 50, height: 50)
-                .clipped()
-                .cornerRadius(50)
-                .overlay(RoundedRectangle(cornerRadius: 50)
-                            .stroke(Color(.label), lineWidth: 1))
+            Button(action: {
+                showProfile.toggle()
+            }, label: {
+                WebImage(url: URL(string: model.user?.profileImageUrl ?? ""))
+                    .scaledToFill()
+                    .frame(width: 50, height: 50)
+                    .clipped()
+                    .cornerRadius(50)
+                    .overlay(RoundedRectangle(cornerRadius: 50)
+                                .stroke(Color(.label), lineWidth: 1))
+            })
             VStack(alignment: .leading, spacing: 4) {
                 let email = model.user?.email.removeEmailSuffix.capitalized ?? "USERNAME"
                 Text(email)
@@ -60,6 +65,9 @@ struct MessageView: View {
                 self.model.isUserLoggedOut = false
                 self.model.fetchCurrentUser()
             })
+        })
+        .fullScreenCover(isPresented: $showProfile, content: {
+            Text("Profile")
         })
     }
 

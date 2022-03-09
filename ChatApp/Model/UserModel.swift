@@ -14,4 +14,8 @@ struct UserModel {
         self.email = data["email"] as? String ?? ""
         self.profileImageUrl = data["profileImage"] as? String ?? ""
     }
+    
+    static func createDic(from model: UserModel) -> [String: Any] {
+        return ["uid": model.uid, "email": model.email, "profileImage": model.profileImageUrl]
+    }
 }
