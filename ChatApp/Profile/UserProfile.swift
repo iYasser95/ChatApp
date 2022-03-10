@@ -6,36 +6,42 @@
 //
 
 import SwiftUI
-
+import SDWebImageSwiftUI
 struct UserProfile: View {
     @State var username: String = ""
     @State var email: String = ""
     @State var userImage: UIImage?
     @State private var shouldShowImagePicker: Bool = false
+    var errorMessageLabel: String = ""
+    @EnvironmentObject var model: MessageViewModel
+    @Environment(\.presentationMode) var presentationMode
     var body: some View {
         NavigationView {
             ScrollView {
+                Group {
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }, label: {
+                        Text("Cancel")
+                            .foregroundColor(.black)
+                    })
+                }.padding(.leading, -200)
+                
                 VStack {
                     Button(action: {
                         shouldShowImagePicker.toggle()
                     }, label: {
-                        Group {
-                            if let image = userImage {
-                                Image(uiImage: image)
-                                    .resizable()
-                            } else {
-                                Image(systemName: "person.fill")
-                                    .font(.system(size: 64))
-                                    .foregroundColor(Color(.label))
-                                    .padding()
-                            }
-                        }
-                        .scaledToFill()
-                        .frame(width: 128, height: 128)
-                        .cornerRadius(64)
+                        //WebImage(url: URL(string: model.user?.profileImageUrl ?? ""))
+                        Image(systemName: "person.fill")
+                            .scaledToFill()
+                            .frame(width: 150, height: 150)
+                            .clipped()
+                            .cornerRadius(100)
+                            .overlay(RoundedRectangle(cornerRadius: 100)
+                                        .stroke(Color(.label), lineWidth: 1))
                     })
                 }
-                VStack {
+                VStack(spacing: 20) {
                     Group {
                         TextField("Username", text: $username)
                             .keyboardType(.default)
@@ -49,8 +55,7 @@ struct UserProfile: View {
                     .padding(12)
                     .background(Color.white)
                     .cornerRadius(17)
-                    .padding()
-                }
+                }.padding()
                 
                 Button(action: {
                     
@@ -66,14 +71,38 @@ struct UserProfile: View {
                     .cornerRadius(17)
                     .padding()
                 })
+                Text(errorMessageLabel)
+                    .foregroundColor(.red)
             }
             .background(Color.init(white: 0, opacity: 0.05).ignoresSafeArea())
             .navigationViewStyle(StackNavigationViewStyle())
+            .navigationBarHidden(true)
             .fullScreenCover(isPresented: $shouldShowImagePicker, onDismiss: nil, content: {
                 ImagePicker(image: $userImage)
             })
+            .onAppear(perform: {
+                fillUserData()
+            })
         }
     }
+    
+    func fillUserData() {
+        self.email = model.user?.email ?? ""
+        self.username = model.user?.username ?? ""
+    }
+//    private func updateUserProfile() {
+//        guard var userData = model.user else { return }
+//        if let image = userImage {
+//            FirebaseManager.shared.uploadImageToStorage(image: image) { (error, url) in
+//                self.errorMessageLabel = error?.localizedDescription ?? ""
+//                guard error == nil else { return }
+//                userData.profileImageUrl = url?.absoluteString ?? ""
+//                userData.username = self.username
+//
+//            }
+//        }
+//
+//    }
 }
 
 struct UserProfile_Previews: PreviewProvider {
