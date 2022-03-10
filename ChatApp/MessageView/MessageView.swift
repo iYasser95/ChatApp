@@ -30,7 +30,7 @@ struct MessageView: View {
                                     .stroke(Color(.label), lineWidth: 1))
                 })
                 VStack(alignment: .leading, spacing: 4) {
-                    let username = model.user?.username?.capitalized
+                    let username = model.user?.username
                     let email = model.user?.email.removeEmailSuffix.capitalized ?? "USERNAME"
                     Text(username ?? email)
                         .font(.system(size: 24, weight: .bold))

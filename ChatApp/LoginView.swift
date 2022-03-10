@@ -139,6 +139,7 @@ struct LoginView: View {
                         self.loginStatusMessage = error?.localizedDescription ?? ""
                         guard error == nil else { return }
                         self.didUserLogIn()
+                        self.presentationMode.wrappedValue.dismiss()
                     }
                 }
             }

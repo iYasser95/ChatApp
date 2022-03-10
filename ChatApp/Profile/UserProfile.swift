@@ -12,7 +12,7 @@ struct UserProfile: View {
     @State var email: String = ""
     @State var userImage: UIImage?
     @State private var shouldShowImagePicker: Bool = false
-    var errorMessageLabel: String = ""
+    @State var errorMessageLabel: String = ""
     @EnvironmentObject var model: MessageViewModel
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
@@ -31,7 +31,7 @@ struct UserProfile: View {
                     Button(action: {
                         shouldShowImagePicker.toggle()
                     }, label: {
-                        //WebImage(url: URL(string: model.user?.profileImageUrl ?? ""))
+                        WebImage(url: URL(string: model.user?.profileImageUrl ?? ""))
                         Image(systemName: "person.fill")
                             .scaledToFill()
                             .frame(width: 150, height: 150)
@@ -56,9 +56,13 @@ struct UserProfile: View {
                     .background(Color.white)
                     .cornerRadius(17)
                 }.padding()
-                
+                Text("If you update the email you will need to sign in with the new one")
+                    .padding()
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.red)
+                    .font(.system(size: 18))
                 Button(action: {
-                    
+                    updateUserProfile()
                 }, label: {
                     HStack {
                         Spacer()
@@ -90,19 +94,36 @@ struct UserProfile: View {
         self.email = model.user?.email ?? ""
         self.username = model.user?.username ?? ""
     }
-//    private func updateUserProfile() {
-//        guard var userData = model.user else { return }
-//        if let image = userImage {
-//            FirebaseManager.shared.uploadImageToStorage(image: image) { (error, url) in
-//                self.errorMessageLabel = error?.localizedDescription ?? ""
-//                guard error == nil else { return }
-//                userData.profileImageUrl = url?.absoluteString ?? ""
-//                userData.username = self.username
-//
-//            }
-//        }
-//
-//    }
+    private func updateUserProfile() {
+        guard var userData = model.user else { return }
+        userData.username = self.username
+        userData.email = self.email
+        guard userImage != nil else {
+            let dataModel = UserModel.createDic(from: userData)
+            FirebaseManager.shared.storeUserData(with: dataModel) { (error) in
+                self.errorMessageLabel = error?.localizedDescription ?? ""
+                guard error == nil else { return }
+                print("Update user data with :\(dataModel)")
+                presentationMode.wrappedValue.dismiss()
+            }
+            return
+        }
+        if let image = userImage {
+            FirebaseManager.shared.uploadImageToStorage(image: image) { (error, url) in
+                self.errorMessageLabel = error?.localizedDescription ?? ""
+                guard error == nil else { return }
+                print("Updated User Image", self)
+                userData.profileImageUrl = url?.absoluteString ?? ""
+                let dataModel = UserModel.createDic(from: userData)
+                FirebaseManager.shared.storeUserData(with: dataModel) { (error) in
+                    self.errorMessageLabel = error?.localizedDescription ?? ""
+                    guard error == nil else { return }
+                    print("Update user data with :\(dataModel)")
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
+        }
+    }
 }
 
 struct UserProfile_Previews: PreviewProvider {
