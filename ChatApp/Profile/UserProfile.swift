@@ -13,7 +13,7 @@ struct UserProfile: View {
     @State var userImage: UIImage?
     @State private var shouldShowImagePicker: Bool = false
     @State var errorMessageLabel: String = ""
-    @EnvironmentObject var model: MessageViewModel
+    @ObservedObject var model: MessageViewModel
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         NavigationView {
@@ -31,14 +31,24 @@ struct UserProfile: View {
                     Button(action: {
                         shouldShowImagePicker.toggle()
                     }, label: {
-                        WebImage(url: URL(string: model.user?.profileImageUrl ?? ""))
-                        Image(systemName: "person.fill")
-                            .scaledToFill()
-                            .frame(width: 150, height: 150)
-                            .clipped()
-                            .cornerRadius(100)
-                            .overlay(RoundedRectangle(cornerRadius: 100)
-                                        .stroke(Color(.label), lineWidth: 1))
+                        if let image = userImage {
+                            Image(uiImage: image)
+                                .resizable()
+                                .frame(width: 150, height: 150)
+                                .cornerRadius(100)
+                                .scaledToFill()
+                                .overlay(RoundedRectangle(cornerRadius: 100)
+                                            .stroke(Color(.label), lineWidth: 1))
+                            
+                        } else {
+                            WebImage(url: URL(string: model.user?.profileImageUrl ?? ""))
+                                .resizable()
+                                .frame(width: 150, height: 150)
+                                .cornerRadius(100)
+                                .scaledToFill()
+                                .overlay(RoundedRectangle(cornerRadius: 100)
+                                            .stroke(Color(.label), lineWidth: 1))
+                        }
                     })
                 }
                 VStack(spacing: 20) {
@@ -57,6 +67,7 @@ struct UserProfile: View {
                     .cornerRadius(17)
                 }.padding()
                 Text("If you update the email you will need to sign in with the new one")
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding()
                     .multilineTextAlignment(.center)
                     .foregroundColor(.red)
@@ -91,8 +102,10 @@ struct UserProfile: View {
     }
     
     func fillUserData() {
-        self.email = model.user?.email ?? ""
-        self.username = model.user?.username ?? ""
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.email = model.user?.email ?? ""
+            self.username = model.user?.username ?? ""
+        }
     }
     private func updateUserProfile() {
         guard var userData = model.user else { return }
@@ -103,8 +116,8 @@ struct UserProfile: View {
             FirebaseManager.shared.storeUserData(with: dataModel) { (error) in
                 self.errorMessageLabel = error?.localizedDescription ?? ""
                 guard error == nil else { return }
-                print("Update user data with :\(dataModel)")
                 presentationMode.wrappedValue.dismiss()
+                model.shouldUpdateUserData = true
             }
             return
         }
@@ -118,8 +131,8 @@ struct UserProfile: View {
                 FirebaseManager.shared.storeUserData(with: dataModel) { (error) in
                     self.errorMessageLabel = error?.localizedDescription ?? ""
                     guard error == nil else { return }
-                    print("Update user data with :\(dataModel)")
                     presentationMode.wrappedValue.dismiss()
+                    model.shouldUpdateUserData = true
                 }
             }
         }
@@ -128,6 +141,6 @@ struct UserProfile: View {
 
 struct UserProfile_Previews: PreviewProvider {
     static var previews: some View {
-        UserProfile()
+        UserProfile(model: MessageViewModel())
     }
 }

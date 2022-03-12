@@ -5,10 +5,11 @@
 //  Created by Apple on 07/03/2022.
 //
 
-import Foundation
+import SwiftUI
 class MessageViewModel: ObservableObject {
     @Published var user: UserModel?
     @Published var isUserLoggedOut: Bool = false
+    @Published var shouldUpdateUserData: Bool = false
     init() {
         DispatchQueue.main.async {
             self.isUserLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil

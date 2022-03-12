@@ -12,9 +12,7 @@ struct MessageView: View {
     @State var showLogoutOption = false
     @State var showProfile = false
     @ObservedObject private var model = MessageViewModel()
-    @StateObject var userModel = MessageViewModel()
     @State var sheetState: States?
-
     private var customNavBar: some View {
             HStack(spacing: 16) {
                 Button(action: {
@@ -22,10 +20,10 @@ struct MessageView: View {
                     showProfile.toggle()
                 }, label: {
                     WebImage(url: URL(string: model.user?.profileImageUrl ?? ""))
-                        .scaledToFill()
+                        .resizable()
                         .frame(width: 50, height: 50)
-                        .clipped()
                         .cornerRadius(50)
+                        .scaledToFill()
                         .overlay(RoundedRectangle(cornerRadius: 50)
                                     .stroke(Color(.label), lineWidth: 1))
                 })
@@ -76,13 +74,12 @@ struct MessageView: View {
                         self.model.fetchCurrentUser()
                     })
                 } else if item == .profile {
-                    UserProfile()
+                    UserProfile(model: model)
                 }
             }
     }
     var body: some View {
         NavigationView {
-
             VStack {
                 customNavBar
                 messagesView
@@ -90,7 +87,9 @@ struct MessageView: View {
             .overlay(
                 newMessageButton, alignment: .bottom)
             .navigationBarHidden(true)
-            .environmentObject(userModel)
+            .onReceive(model.$shouldUpdateUserData, perform: { _ in
+                model.fetchCurrentUser()
+            })
         }
     }
 
