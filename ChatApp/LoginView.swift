@@ -16,6 +16,7 @@ struct LoginView: View {
     @State private var loginStatusMessage: String = ""
     @State private var shouldShowImagePicker: Bool = false
     @State private var userImage: UIImage?
+    @Environment(\.presentationMode) var presentationMode
     let didUserLogIn: () -> ()
     var firebaseManager = FirebaseManager.shared
     var isEmailValid: Bool {
@@ -138,6 +139,7 @@ struct LoginView: View {
                         self.loginStatusMessage = error?.localizedDescription ?? ""
                         guard error == nil else { return }
                         self.didUserLogIn()
+                        self.presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
@@ -150,6 +152,7 @@ struct LoginView: View {
             self.loginStatusMessage = error?.localizedDescription ?? ""
             guard error == nil else { return }
             self.didUserLogIn()
+            self.presentationMode.wrappedValue.dismiss()
         }
     }
     

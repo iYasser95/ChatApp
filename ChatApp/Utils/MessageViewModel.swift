@@ -5,10 +5,11 @@
 //  Created by Apple on 07/03/2022.
 //
 
-import Foundation
+import SwiftUI
 class MessageViewModel: ObservableObject {
     @Published var user: UserModel?
     @Published var isUserLoggedOut: Bool = false
+    @Published var shouldUpdateUserData: Bool = false
     init() {
         DispatchQueue.main.async {
             self.isUserLoggedOut = FirebaseManager.shared.auth.currentUser?.uid == nil
@@ -17,7 +18,10 @@ class MessageViewModel: ObservableObject {
     }
     
      func fetchCurrentUser() {
-        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else { return }
+        guard let uid = FirebaseManager.shared.auth.currentUser?.uid else {
+            isUserLoggedOut = true
+            return
+        }
         FirebaseManager.shared.fireStore.collection("users")
             .document(uid).getDocument { (snapshot, error) in
                 guard error == nil else {
