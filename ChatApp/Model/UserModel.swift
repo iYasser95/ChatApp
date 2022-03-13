@@ -6,7 +6,8 @@
 //
 
 import Foundation
-struct UserModel {
+struct UserModel: Identifiable {
+    var id: String { return uid }
     var uid, email, profileImageUrl: String
     var username: String?
     init(data: [String: Any]) {

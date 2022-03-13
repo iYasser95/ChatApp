@@ -13,6 +13,7 @@ struct MessageView: View {
     @State var showProfile = false
     @ObservedObject private var model = MessageViewModel()
     @State var sheetState: States?
+    @State var shouldShowNewMessage: Bool = false
     private var customNavBar: some View {
             HStack(spacing: 16) {
                 Button(action: {
@@ -128,7 +129,7 @@ struct MessageView: View {
 
     private var newMessageButton: some View {
         Button {
-
+            shouldShowNewMessage.toggle()
         } label: {
             HStack {
                 Spacer()
@@ -143,6 +144,9 @@ struct MessageView: View {
                 .padding(.horizontal)
                 .shadow(radius: 15)
         }
+        .fullScreenCover(isPresented: $shouldShowNewMessage, content: {
+            NewMessageView()
+        })
     }
 }
 
