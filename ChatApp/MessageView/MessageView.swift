@@ -14,6 +14,8 @@ struct MessageView: View {
     @ObservedObject private var model = MessageViewModel()
     @State var sheetState: States?
     @State var shouldShowNewMessage: Bool = false
+    @State var user: UserModel?
+    @State var shouldNavigateToChatLog: Bool = false
     private var customNavBar: some View {
             HStack(spacing: 16) {
                 Button(action: {
@@ -84,6 +86,7 @@ struct MessageView: View {
             VStack {
                 customNavBar
                 messagesView
+                NavigationLink("", destination: ChatView(user: user), isActive: $shouldNavigateToChatLog)
             }
             .overlay(
                 newMessageButton, alignment: .bottom)
@@ -98,27 +101,31 @@ struct MessageView: View {
         ScrollView {
             ForEach(0..<10, id: \.self) { num in
                 VStack {
-                    HStack(spacing: 16) {
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 32))
-                            .padding(8)
-                            .overlay(RoundedRectangle(cornerRadius: 44)
-                                        .stroke(Color(.label), lineWidth: 1)
-                            )
+                    NavigationLink(
+                        destination: ChatView(user: user),
+                        label: {
+                            HStack(spacing: 16) {
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 32))
+                                    .padding(8)
+                                    .overlay(RoundedRectangle(cornerRadius: 44)
+                                                .stroke(Color(.label), lineWidth: 1)
+                                    )
 
 
-                        VStack(alignment: .leading) {
-                            Text("Username")
-                                .font(.system(size: 16, weight: .bold))
-                            Text("Message sent to user")
-                                .font(.system(size: 14))
-                                .foregroundColor(Color(.lightGray))
-                        }
-                        Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("Username")
+                                        .font(.system(size: 16, weight: .bold))
+                                    Text("Message sent to user")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(Color(.lightGray))
+                                }
+                                Spacer()
 
-                        Text("22d")
-                            .font(.system(size: 14, weight: .semibold))
-                    }
+                                Text("22d")
+                                    .font(.system(size: 14, weight: .semibold))
+                            }
+                        }).foregroundColor(Color(.label))
                     Divider()
                         .padding(.vertical, 8)
                 }.padding(.horizontal)
@@ -145,7 +152,11 @@ struct MessageView: View {
                 .shadow(radius: 15)
         }
         .fullScreenCover(isPresented: $shouldShowNewMessage, content: {
-            NewMessageView()
+            NewMessageView(didSelectUser: { user in
+                self.user = user
+                self.shouldNavigateToChatLog.toggle()
+                print(user.email, self)
+            })
         })
     }
 }

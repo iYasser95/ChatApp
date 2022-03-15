@@ -10,11 +10,15 @@ import SDWebImageSwiftUI
 struct NewMessageView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var model = NewMessageViewModel()
+    let didSelectUser: (UserModel) -> ()
     var body: some View {
         NavigationView {
             ScrollView {
                 ForEach(model.users) { user in
-                    Button(action: {}, label: {
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                        didSelectUser(user)
+                    }, label: {
                         HStack(spacing: 16) {
                             WebImage(url: URL(string: user.profileImageUrl))
                                 .resizable()
@@ -49,6 +53,8 @@ struct NewMessageView: View {
 
 struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageView()
+        NewMessageView(didSelectUser: { user in
+            // No Implementation needed
+        })
     }
 }
